@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }))
 
 require('./routes')(app)
 
-server.listen(port, (error) => {
+server.listen(process.env.PORT || port, (error) => {
   if (error) {
     return logger.error(error)
   }
