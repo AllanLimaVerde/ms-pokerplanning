@@ -1,0 +1,9 @@
+node_modules/
+.env
+apidoc/
+.scannerwork/
+.idea/
+.vscode/
+__tests__/coverage
+**/.DS_Store
+coverage/
