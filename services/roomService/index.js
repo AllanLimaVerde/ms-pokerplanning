@@ -30,6 +30,7 @@ let newNameAttempt = null
 
 const verifyIfRepeatedNames = ({ userName, roomName }) => {
   while (true) {
+    console.log('==============================================')
     const existingRoom = roomHall[roomName]
 
     if (!existingRoom) return
@@ -75,7 +76,7 @@ const goToRoom = ({ roomName, userName, action }) => {
     return { room: roomHall[roomName] = newRoom }
   }
 
-  if (!existingRoom) throw new Error(errors.roomNotFound)
+  // if (!existingRoom) throw new Error(errors.roomNotFound)
 
   return { room: existingRoom }
 }
