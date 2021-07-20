@@ -19,5 +19,5 @@ server.listen(process.env.PORT || port, (error) => {
     return logger.error(error)
   }
 
-  logger.info(`Server listening on port ${port}`)
+  logger.info(`Server listening on port ${process.env.PORT || port}`)
 })
