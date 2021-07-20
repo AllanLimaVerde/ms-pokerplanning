@@ -12,6 +12,9 @@ module.exports = {
   },
   actions: {
     resetServer: 'resetServer',
-    joinOrCreateRoom: 'joinOrCreateRoom'
+    joinOrCreateRoom: 'joinOrCreateRoom',
+    sse: {
+      playerNameConflict: 'playerNameConflict'
+    }
   }
 }

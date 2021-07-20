@@ -24,50 +24,20 @@ class Player {
 // const testRoom = new Room('teste', testPlayers)
 let roomHall = {}
 
-let i = 2
-let auxUsername = null
-let newNameAttempt = null
-
-const verifyIfRepeatedNames = ({ userName, roomName }) => {
-  while (true) {
-    console.log('==============================================')
-    const existingRoom = roomHall[roomName]
-
-    if (!existingRoom) return
-
-    const nameAlreadyInRoom = existingRoom.players.filter(player => player.userName === userName)
-
-    if (nameAlreadyInRoom.length) {
-      newNameAttempt = `${auxUsername} ${i}`
-      i++
-      const notSolvedYet = verifyIfRepeatedNames({ userName: newNameAttempt, roomName })
-      if (!notSolvedYet) {
-        return newNameAttempt
-      }
-    }
-
-    i = 2
-    return newNameAttempt
-  }
-}
-
 const goToRoom = ({ roomName, userName, action }) => {
   const existingRoom = roomHall[roomName]
   const newPlayer = new Player(userName)
-  let alteredUserName = null
 
   if (action.description === actions.joinOrCreateRoom) {
     if (existingRoom) {
-      logger.info([`Room '${roomName}' already existed`, `User '${userName}' joining room '${roomName}'...`])
-      i = 2
-      auxUsername = userName
-      alteredUserName = verifyIfRepeatedNames({ userName, roomName })
-      if (alteredUserName) {
-        logger.info([`Room '${roomName}' already had a player named ${userName}`, `Changing '${userName}' to '${alteredUserName}'...`])
-        newPlayer.userName = alteredUserName
+      logger.info([`Room '${roomName}' already existed`, `User '${userName}' trying to join room '${roomName}'...`])
+      const existingUserWithSameName = existingRoom.players.find(player => player.userName === userName)
+      if (existingUserWithSameName) {
+        logger.info([`Room '${roomName}' already had a player named ${userName}`, `Player should choose a different name`])
+        return { SSEaction: actions.sse.playerNameConflict }
       }
       existingRoom.players.push(newPlayer)
-      return { room: existingRoom, alteredUserName }
+      return { room: existingRoom }
     }
 
     logger.info(`Player '${userName}' is creating room '${roomName}'...`)  
