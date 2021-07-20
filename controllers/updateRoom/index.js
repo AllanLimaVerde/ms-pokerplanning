@@ -26,16 +26,16 @@ const updateRoom = async (req, res) => {
       return res.status(200).json({ message: `Servidor resetado com sucesso`, status: 200 })
     }
 
-    const room = roomService.goToRoom({ roomName, userName, action })
+    const { room, alteredUserName } = await roomService.goToRoom({ roomName, userName, action })
 
     const { description, payload } = action
     const predictedAction = userActions[description]
     
     if (predictedAction) {
       await predictedAction.execute({ userName, roomName, payload })
-    } 
+    }
     
-    return res.status(200).json({ room })
+    return res.status(200).json({ room, alteredUserName })
   } catch (error) {
     logger.error(error, __filename)
   }

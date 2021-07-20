@@ -29,9 +29,6 @@ const userActions = {
         const player = room.players.find(p => p.userName === userName)
 
         if (!player) {
-          console.log('roomName', roomName)
-          console.log('userName', userName)
-          console.log('room', room)
           throw new Error(errors.playerNotInRoom)
         }
 
@@ -54,8 +51,6 @@ const userActions = {
         const room = roomService.hall()[roomName]
 
         if (!room) {
-          console.log('roomName', roomName)
-          console.log('room', room)
           throw new Error(errors.roomNotFound)
         }
 
@@ -71,8 +66,6 @@ const userActions = {
         const room = roomService.hall()[roomName]
 
         if (!room) {
-          console.log('roomName', roomName)
-          console.log('room', room)
           throw new Error(errors.roomNotFound)
         }
 

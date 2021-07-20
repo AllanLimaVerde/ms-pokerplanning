@@ -1,4 +1,4 @@
-const { roomStatuses, errors } = require('../../constants')
+const { roomStatuses, actions, errors } = require('../../constants')
 const { logger } = require('../loggerService')
 
 class Room {
@@ -24,26 +24,60 @@ class Player {
 // const testRoom = new Room('teste', testPlayers)
 let roomHall = {}
 
+let i = 2
+let auxUsername = null
+let newNameAttempt = null
+
+const verifyIfRepeatedNames = ({ userName, roomName }) => {
+  while (true) {
+    const existingRoom = roomHall[roomName]
+
+    if (!existingRoom) return
+
+    const nameAlreadyInRoom = existingRoom.players.filter(player => player.userName === userName)
+
+    if (nameAlreadyInRoom.length) {
+      newNameAttempt = `${auxUsername} ${i}`
+      i++
+      const notSolvedYet = verifyIfRepeatedNames({ userName: newNameAttempt, roomName })
+      if (!notSolvedYet) {
+        return newNameAttempt
+      }
+    }
+
+    i = 2
+    return newNameAttempt
+  }
+}
+
 const goToRoom = ({ roomName, userName, action }) => {
   const existingRoom = roomHall[roomName]
   const newPlayer = new Player(userName)
+  let alteredUserName = null
 
-  if (action.description === 'joinOrCreateRoom') {
+  if (action.description === actions.joinOrCreateRoom) {
     if (existingRoom) {
       logger.info([`Room '${roomName}' already existed`, `User '${userName}' joining room '${roomName}'...`])
+      i = 2
+      auxUsername = userName
+      alteredUserName = verifyIfRepeatedNames({ userName, roomName })
+      if (alteredUserName) {
+        logger.info([`Room '${roomName}' already had a player named ${userName}`, `Changing '${userName}' to '${alteredUserName}'...`])
+        newPlayer.userName = alteredUserName
+      }
       existingRoom.players.push(newPlayer)
-      return existingRoom
+      return { room: existingRoom, alteredUserName }
     }
 
     logger.info(`Player '${userName}' is creating room '${roomName}'...`)  
     
     const newRoom = new Room(roomName, [newPlayer])
-    return roomHall[roomName] = newRoom
+    return { room: roomHall[roomName] = newRoom }
   }
 
   if (!existingRoom) throw new Error(errors.roomNotFound)
 
-  return existingRoom
+  return { room: existingRoom }
 }
 
 const checkIfRoomStatusShouldChange = roomName => {
@@ -65,7 +99,8 @@ const checkIfRoomStatusShouldChange = roomName => {
       return false
     }
     case roomStatuses.reveal: {
-      console.log('room is in reveal')
+      logger.info(`room is in reveal...`)
+      return false
     }
     default: {
       return false

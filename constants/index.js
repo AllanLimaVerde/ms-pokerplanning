@@ -11,6 +11,7 @@ module.exports = {
     playerNotInRoom: 'Player executing action is not in room',
   },
   actions: {
-    resetServer: 'resetServer'
+    resetServer: 'resetServer',
+    joinOrCreateRoom: 'joinOrCreateRoom'
   }
 }
