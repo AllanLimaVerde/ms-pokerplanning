@@ -10,7 +10,7 @@ const userActions = require('./userActions')
  * @name updateRoom
  * @param {Object} req Request instance
  * @param {Object} res Response instance
- * @returns {Promise<Object>} Object that specifies if the token was resent
+ * @returns {Promise<Object>}
  */
 const updateRoom = async (req, res) => {
   try {
