@@ -58,13 +58,13 @@ const goToRoom = ({ roomName, userName, action }) => {
   if (action.description === actions.joinOrCreateRoom) {
     if (existingRoom) {
       logger.info([`Room '${roomName}' already existed`, `User '${userName}' joining room '${roomName}'...`])
-      i = 2
-      auxUsername = userName
-      alteredUserName = verifyIfRepeatedNames({ userName, roomName })
-      if (alteredUserName) {
-        logger.info([`Room '${roomName}' already had a player named ${userName}`, `Changing '${userName}' to '${alteredUserName}'...`])
-        newPlayer.userName = alteredUserName
-      }
+      // i = 2
+      // auxUsername = userName
+      // alteredUserName = verifyIfRepeatedNames({ userName, roomName })
+      // if (alteredUserName) {
+      //   logger.info([`Room '${roomName}' already had a player named ${userName}`, `Changing '${userName}' to '${alteredUserName}'...`])
+      //   newPlayer.userName = alteredUserName
+      // }
       existingRoom.players.push(newPlayer)
       return { room: existingRoom, alteredUserName }
     }
