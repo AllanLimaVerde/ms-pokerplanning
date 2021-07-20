@@ -17,12 +17,12 @@ class Player {
   }
 }
 
-const testPlayers = [
-  new Player('testPlayer 1', 5),
-  new Player('testPlayer 2', 3),
-]
-const testRoom = new Room('teste', testPlayers)
-let roomHall = { teste: testRoom }
+// const testPlayers = [
+//   new Player('testPlayer 1', 5),
+//   new Player('testPlayer 2', 3),
+// ]
+// const testRoom = new Room('teste', testPlayers)
+let roomHall = {}
 
 const goToRoom = ({ roomName, userName, action }) => {
   const existingRoom = roomHall[roomName]
