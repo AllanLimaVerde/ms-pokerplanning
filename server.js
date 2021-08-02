@@ -100,7 +100,7 @@ const send = (ws, data) => {
   ws.send(value)
 }
 
-const broadcast = (roomName, playerId, _data = null) => {
+const broadcast = (roomName, playerId = null, _data = null) => {
   const room = roomService.hall()[roomName]
   if (!_data) {
     _data = { type: 'updateRoom', data: room }
@@ -108,7 +108,7 @@ const broadcast = (roomName, playerId, _data = null) => {
 
   for (const player in room.players) {
     console.log(_data)
-    player !== playerId && send(playerSockets[player], _data)
+    player !== playerId && send(roomService.playerSockets[player], _data)
   }
 }
 
@@ -174,16 +174,17 @@ const setupWSS = wss => {
         switch (type) {
           case 'playerEnteringRoom' : {
             console.log('received msg playerEnteringRoom')
-            const newPlayer = new roomService.Player(data.userName, ws, null)
+            const newPlayer = new roomService.Player(data.userName, null)
             serverHall[roomName].players[ws._id] = newPlayer
-            playerSockets[ws._id] = ws
+            roomService.playerSockets[ws._id] = ws
             console.log('agagaegaeg', serverHall[roomName])
-            broadcast(roomName, null)
+            broadcast(roomName)
             break
           }
           case 'vote': {
             console.log('received msg vote')
             const player = getPlayer(roomName, playerId)
+            console.log(selectedNumber)
             player.currentVote = selectedNumber
             broadcast(roomName, ws._id)
             verifyIfRoomIsInVote(roomName)
@@ -208,13 +209,16 @@ const setupWSS = wss => {
     })
 
     ws.on('close', () => {
+      console.log('caught a closing event for id ' + ws._id)
       const serverHall = roomService.hall()
       for (const room in serverHall) {
         const players = serverHall[room].players
         for (const player in players) {
-          if (players[player]._id === ws._id) {
-            delete serverHall[room][ws._id]
-            broadcast(room, null)
+          if (player === ws._id) {
+            console.log('room b4 delete', serverHall[room])
+            delete serverHall[room].players[ws._id]
+            console.log('room after delete', serverHall[room])
+            broadcast(room)
           }
         }
       }

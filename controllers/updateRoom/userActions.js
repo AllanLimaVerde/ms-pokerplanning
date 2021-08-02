@@ -14,27 +14,28 @@ const userActions = {
   selectCard: {
     execute: 
       async ({ userName, roomName, payload }) => {
-        const room = roomService.hall()[roomName]
+        // const room = roomService.hall()[roomName]
 
-        if (!room) {
-          throw new Error(errors.roomNotFound)
-        }
+        // if (!room) {
+        //   throw new Error(errors.roomNotFound)
+        // }
 
-        if (!userName) {
-          throw new Error(errors.userRequired)
-        }
+        // if (!userName) {
+        //   throw new Error(errors.userRequired)
+        // }
 
-        logger.info([`[Room ${roomName}]`, `User '${userName}' has selected card ${payload}`])
+        // logger.info([`[Room ${roomName}]`, `User '${userName}' has selected card ${payload}`])
 
-        const player = room.players.find(p => p.userName === userName)
+        // const player = room.players.find(p => p.userName === userName)
 
-        if (!player) {
-          throw new Error(errors.playerNotInRoom)
-        }
+        // if (!player) {
+        //   throw new Error(errors.playerNotInRoom)
+        // }
 
-        player.currentVote = payload
+        // player.currentVote = payload
+        // console.log('uaegaeg', payload)
 
-        roomService.checkIfRoomStatusShouldChange(roomName)
+        // roomService.checkIfRoomStatusShouldChange(roomName)
       }
   },
   checkRoomForChange: {
@@ -58,18 +59,15 @@ const userActions = {
         room.status = roomStatuses.waiting
       }
   },
-  leaveRoom: {
+  playerOnLobby: {
     execute:
-      async ({ userName, roomName }) => {
-        logger.info(`Player '${userName}' wants to quit room '${roomName}'`)
+      async ({ payload }) => {
+        const { playerId } = payload
+        logger.info(`Player '${playerId}' is on lobby. Quitting all rooms...`)
 
-        const room = roomService.hall()[roomName]
-
-        if (!room) {
-          throw new Error(errors.roomNotFound)
-        }
-
-        room.players = room.players.filter(player => player.userName != userName)
+        const socket = roomService.playerSockets[playerId]
+        console.log(roomService.playerSockets)
+        socket && socket.close()
       }
   },
   resetServer: {

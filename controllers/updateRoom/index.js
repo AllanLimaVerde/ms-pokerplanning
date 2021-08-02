@@ -23,6 +23,7 @@ const updateRoom = async (req, res) => {
 
     if (action.description === actions.resetServer) {
       await userActions[action.description].execute()
+      console.log('server reset')
       return res.status(200).json({ message: `Servidor resetado com sucesso` })
     }
 

@@ -12,7 +12,7 @@ class Room {
 }
 
 class Player {
-  constructor(userName, socket, currentVote = null) {
+  constructor(userName, currentVote = null) {
     this.userName = userName
     this.currentVote = currentVote
   }
