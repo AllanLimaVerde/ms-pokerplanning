@@ -210,10 +210,11 @@ const setupWSS = wss => {
     ws.on('close', () => {
       const serverHall = roomService.hall()
       for (const room in serverHall) {
-        for (const player in room.players) {
-          if (player._id === ws._id) {
-            delete room.players[ws._id]
-            broadcast(room.name, null, { room: serverHall[room.name] })
+        const players = serverHall[room].players
+        for (const player in players) {
+          if (players[player]._id === ws._id) {
+            delete serverHall[room][ws._id]
+            broadcast(room, null)
           }
         }
       }
