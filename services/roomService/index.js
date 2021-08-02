@@ -1,17 +1,18 @@
 const { roomStatuses, actions, errors } = require('../../constants')
 const { logger } = require('../loggerService')
+const { wss } = require('../../server')
+const { v4: uuid } = require('uuid')
 
 class Room {
-  constructor(name, players, pollingInterval = 2000, status = roomStatuses.waiting) {
+  constructor(name, players = {}, status = roomStatuses.waiting) {
     this.name = name
     this.players = players
-    this.pollingInterval = pollingInterval
     this.status = status
   }
 }
 
 class Player {
-  constructor(userName, currentVote = null) {
+  constructor(userName, socket, currentVote = null) {
     this.userName = userName
     this.currentVote = currentVote
   }
@@ -24,29 +25,21 @@ class Player {
 // const testRoom = new Room('teste', testPlayers)
 let roomHall = {}
 
+let playerSockets = {}
+
 const goToRoom = ({ roomName, userName, action }) => {
   const existingRoom = roomHall[roomName]
-  const newPlayer = new Player(userName)
 
   if (action.description === actions.joinOrCreateRoom) {
     if (existingRoom) {
       logger.info([`Room '${roomName}' already existed`, `User '${userName}' trying to join room '${roomName}'...`])
-      const existingUserWithSameName = existingRoom.players.find(player => player.userName === userName)
-      if (existingUserWithSameName) {
-        logger.info([`Room '${roomName}' already had a player named ${userName}`, `Player should choose a different name`])
-        return { SSEaction: actions.sse.playerNameConflict }
-      }
-      existingRoom.players.push(newPlayer)
       return { room: existingRoom }
     }
 
     logger.info(`Player '${userName}' is creating room '${roomName}'...`)  
-    
-    const newRoom = new Room(roomName, [newPlayer])
+    const newRoom = new Room(roomName)
     return { room: roomHall[roomName] = newRoom }
   }
-
-  // if (!existingRoom) throw new Error(errors.roomNotFound)
 
   return { room: existingRoom }
 }
@@ -89,7 +82,9 @@ const roomService = {
   goToRoom,
   checkIfRoomStatusShouldChange,
   hall,
-  reset
+  reset,
+  Player,
+  playerSockets
 }
 
 module.exports = roomService

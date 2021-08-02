@@ -23,10 +23,10 @@ const updateRoom = async (req, res) => {
 
     if (action.description === actions.resetServer) {
       await userActions[action.description].execute()
-      return res.status(200).json({ message: `Servidor resetado com sucesso`, status: 200 })
+      return res.status(200).json({ message: `Servidor resetado com sucesso` })
     }
 
-    const { room, SSEaction } = await roomService.goToRoom({ roomName, userName, action })
+    const { room } = await roomService.goToRoom({ roomName, userName, action })
 
     const { description, payload } = action
     const predictedAction = userActions[description]
@@ -35,7 +35,7 @@ const updateRoom = async (req, res) => {
       await predictedAction.execute({ userName, roomName, payload })
     }
     
-    return res.status(200).json({ room, SSEaction })
+    return res.status(200).json({ room })
   } catch (error) {
     logger.error(error, __filename)
   }
