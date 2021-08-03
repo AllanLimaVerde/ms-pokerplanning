@@ -72,8 +72,6 @@ const setAllVotesToNull = roomName => {
   for (const player in players) {
     players[player].currentVote = null
   }
-
-  broadcast(roomName, null)
 }
 
 const setupWSS = wss => {
@@ -115,6 +113,7 @@ const setupWSS = wss => {
           case 'playAgain': {
             logger.info(`Received msg 'playAgain' from player '${ws._id}'`)
             setAllVotesToNull(roomName)
+            broadcast(roomName, null, { type: 'resetRoomForNewVote', data: { room: serverHall[roomName] }})
             break
           }
           case 'getRoom': {
