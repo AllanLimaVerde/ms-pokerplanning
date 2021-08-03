@@ -33,7 +33,6 @@ const userActions = {
         logger.info(`Player '${playerId}' is on lobby. Quitting all rooms...`)
 
         const socket = roomService.playerSockets[playerId]
-        console.log(roomService.playerSockets)
         socket && socket.close()
       }
   },
